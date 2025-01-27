@@ -424,14 +424,14 @@ export const nativeMenuItems = [
           { title: "Message Viewer", path: "/email/tools/message-viewer" },
         ],
       },
-      // {
-      //   title: "Dark Web Tools",
-      //   path: "/tools/darkweb",
-      //   items: [
-      //     { title: "Tenant Breach Lookup", path: "/tools/tenantbreachlookup" },
-      //     { title: "Breach Lookup", path: "/tools/breachlookup" },
-      //   ],
-      // },
+      {
+        title: "Dark Web Tools",
+        path: "/tools/darkweb",
+        items: [
+          { title: "Tenant Breach Lookup", path: "/tools/tenantbreachlookup" },
+          { title: "Breach Lookup", path: "/tools/breachlookup" },
+        ],
+      },
       {
         title: "Template Library",
         path: "/tools/templatelib",
@@ -470,6 +470,11 @@ export const nativeMenuItems = [
           {
             title: "Timers",
             path: "/cipp/advanced/timers",
+            roles: ["superadmin"],
+          },
+          {
+            title: "Table Maintenance",
+            path: "/cipp/advanced/table-maintenance",
             roles: ["superadmin"],
           },
         ],
