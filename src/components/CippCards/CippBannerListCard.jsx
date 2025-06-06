@@ -16,7 +16,7 @@ import { CippPropertyListCard } from "./CippPropertyListCard";
 import { CippDataTable } from "../CippTable/CippDataTable";
 
 export const CippBannerListCard = (props) => {
-  const { items = [], isCollapsible = false, isFetching = false, ...other } = props;
+  const { items = [], isCollapsible = false, isFetching = false, children, ...other } = props;
   const [expanded, setExpanded] = useState(null);
 
   const handleExpand = useCallback((itemId) => {
@@ -39,8 +39,8 @@ export const CippBannerListCard = (props) => {
                 </Box>
               </Stack>
               <Stack alignItems="center" direction="row" spacing={2}>
-                <Skeleton variant="circular" width={24} height={24} />
                 <Skeleton variant="text" width={60} />
+                <Skeleton variant="circular" width={24} height={24} />
               </Stack>
             </Stack>
           </Card>
@@ -74,7 +74,16 @@ export const CippBannerListCard = (props) => {
                     direction="row"
                     flexWrap="wrap"
                     justifyContent="space-between"
-                    sx={{ p: 3 }}
+                    sx={{
+                      p: 3,
+                      ...(isCollapsible && {
+                        cursor: "pointer",
+                        "&:hover": {
+                          bgcolor: "action.hover",
+                        },
+                      }),
+                    }}
+                    onClick={isCollapsible ? () => handleExpand(item.id) : undefined}
                   >
                     {/* Left Side: cardLabelBox */}
                     <Stack direction="row" spacing={2} alignItems="center">
@@ -127,8 +136,16 @@ export const CippBannerListCard = (props) => {
                           <Typography variant="body2">{item.statusText}</Typography>
                         </Stack>
                       )}
+                      {item?.cardLabelBoxActions && (
+                        <Box onClick={(e) => e.stopPropagation()}>{item.cardLabelBoxActions}</Box>
+                      )}
                       {isCollapsible && (
-                        <IconButton onClick={() => handleExpand(item.id)}>
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleExpand(item.id);
+                          }}
+                        >
                           <SvgIcon
                             fontSize="small"
                             sx={{
@@ -143,16 +160,20 @@ export const CippBannerListCard = (props) => {
                     </Stack>
                   </Stack>
                   {isCollapsible && (
-                    <Collapse in={isExpanded}>
+                    <Collapse in={isExpanded} unmountOnExit>
                       <Divider />
-                      {item?.propertyItems?.length > 0 && (
-                        <CippPropertyListCard
-                          propertyItems={item.propertyItems || []}
-                          layout="dual"
-                          isFetching={item.isFetching || false}
-                        />
-                      )}
-                      {item?.table && <CippDataTable {...item.table} />}
+                      <Stack spacing={1}>
+                        {item?.propertyItems?.length > 0 && (
+                          <CippPropertyListCard
+                            propertyItems={item.propertyItems || []}
+                            layout="dual"
+                            isFetching={item.isFetching || false}
+                          />
+                        )}
+                        {item?.table && <CippDataTable {...item.table} />}
+                        {item?.children && <Box sx={{ pl: 3 }}>{item.children}</Box>}
+                        {item?.actionButton && <Box sx={{ pl: 3, pb: 2 }}>{item.actionButton}</Box>}
+                      </Stack>
                     </Collapse>
                   )}
                 </li>
@@ -180,8 +201,13 @@ CippBannerListCard.propTypes = {
       subtext: PropTypes.string,
       statusColor: PropTypes.string,
       statusText: PropTypes.string,
+      actionButton: PropTypes.element,
       propertyItems: PropTypes.array,
+      table: PropTypes.object,
+      actionButton: PropTypes.element,
       isFetching: PropTypes.bool,
+      children: PropTypes.node,
+      cardLabelBoxActions: PropTypes.element,
     })
   ).isRequired,
   isCollapsible: PropTypes.bool,
