@@ -1,14 +1,14 @@
-import { TabbedLayout } from "/src/layouts/TabbedLayout";
-import { Layout as DashboardLayout } from "/src/layouts/index.js";
+import { TabbedLayout } from "../../../layouts/TabbedLayout";
+import { Layout as DashboardLayout } from "../../../layouts/index.js";
 import tabOptions from "./tabOptions";
-import CippFormPage from "/src/components/CippFormPages/CippFormPage";
+import CippFormPage from "../../../components/CippFormPages/CippFormPage";
 import { Alert, CardContent, Stack, Typography } from "@mui/material";
 import { WarningAmberOutlined } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
-import { ApiGetCall } from "../../../api/ApiCall";
+import { ApiGetCall, ApiGetCallWithPagination } from "../../../api/ApiCall";
 import { useEffect } from "react";
 import CippFormComponent from "../../../components/CippComponents/CippFormComponent";
-import GDAPRoles from "/src/data/GDAPRoles";
+import GDAPRoles from "../../../data/GDAPRoles";
 import { CippFormTenantSelector } from "../../../components/CippComponents/CippFormTenantSelector";
 
 const Page = () => {
@@ -23,10 +23,11 @@ const Page = () => {
     queryKey: "ExecSAMRoles",
   });
 
-  const { data: tenants = [], isSuccess: tenantsSuccess } = ApiGetCall({
+  const { data: tenantsData = { pages: [] }, isSuccess: tenantsSuccess } = ApiGetCallWithPagination({
     url: "/api/ListTenants?AllTenantSelector=true",
     queryKey: "ListTenants-AllTenantSelector",
   });
+  const tenants = tenantsData?.pages?.[0] || [];
 
   useEffect(() => {
     if (execSAMRoles.isSuccess && tenantsSuccess) {
